@@ -9,6 +9,10 @@ services:
     envVars:
       - key: PORT
         value: 8095
+      - key: RESEND_API_KEY
+        sync: false # Paste your Resend API Key (re_...) in Render Dashboard
+      - key: RESEND_FROM_EMAIL
+        value: COSMOS MEDICALS <onboarding@resend.dev>
       - key: MAIL_USERNAME
         sync: false
       - key: MAIL_PASSWORD
