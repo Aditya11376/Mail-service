@@ -68,7 +68,8 @@ public class DoctorApprovalMailServiceImpl implements IDoctorApprovalMailService
                         "to", List.of(dto.recipientEmail()),
                         "subject", "COSMOS Clinical Portal: Registration Approved & Login ID Issued",
                         "html", htmlContent,
-                        "text", plainText
+                        "text", plainText,
+                        "reply_to", "guptasoftworks@gmail.com"
                 );
 
                 String resendResponse = restClient.post()
