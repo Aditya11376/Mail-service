@@ -26,6 +26,9 @@ public class DoctorApprovalMailServiceImpl implements IDoctorApprovalMailService
 
     private final JavaMailSender mailSender;
 
+    @Value("${brevo.api.key:${BREVO_API_KEY:}}")
+    private String brevoApiKey;
+
     @Value("${resend.api.key:${RESEND_API_KEY:}}")
     private String resendApiKey;
 
@@ -57,7 +60,60 @@ public class DoctorApprovalMailServiceImpl implements IDoctorApprovalMailService
         String htmlContent = buildHtmlContent(dto, issuedLoginId, targetLoginUrl);
         String plainText = buildPlainText(dto, issuedLoginId, targetLoginUrl);
 
-        // 1. Resend HTTPS API (Recommended for Cloud / Render over Port 443)
+        // 1. Brevo HTTPS API (Recommended for Cloud / Render over Port 443 - Supports any recipient without domain)
+        if (brevoApiKey != null && !brevoApiKey.isBlank()) {
+            try {
+                log.info("Dispatching email via Brevo HTTPS API (Port 443)...");
+                RestClient restClient = RestClient.create("https://api.brevo.com");
+
+                Map<String, Object> payload = Map.of(
+                        "sender", Map.of(
+                                "name", fromName,
+                                "email", fromEmail
+                        ),
+                        "to", List.of(
+                                Map.of(
+                                        "email", dto.recipientEmail(),
+                                        "name", "Dr. " + dto.recipientName()
+                                )
+                        ),
+                        "subject", "COSMOS Clinical Portal: Registration Approved & Login ID Issued",
+                        "htmlContent", htmlContent,
+                        "textContent", plainText,
+                        "replyTo", Map.of(
+                                "email", fromEmail,
+                                "name", fromName
+                        )
+                );
+
+                String brevoResponse = restClient.post()
+                        .uri("/v3/smtp/email")
+                        .header("api-key", brevoApiKey.trim())
+                        .header("accept", "application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(payload)
+                        .retrieve()
+                        .body(String.class);
+
+                log.info("Brevo HTTPS dispatch succeeded: {}", brevoResponse);
+                return new MailResponseDto(
+                        "SENT",
+                        "Doctor approval email successfully sent via Brevo HTTPS (Port 443)",
+                        dto.recipientEmail(),
+                        LocalDateTime.now()
+                );
+            } catch (Exception e) {
+                log.error("Brevo dispatch failed: {}", e.getMessage(), e);
+                return new MailResponseDto(
+                        "FAILED",
+                        "Brevo email dispatch failed: " + e.getMessage(),
+                        dto.recipientEmail(),
+                        LocalDateTime.now()
+                );
+            }
+        }
+
+        // 2. Resend HTTPS API (Port 443)
         if (resendApiKey != null && !resendApiKey.isBlank()) {
             try {
                 log.info("Dispatching email via Resend HTTPS API (Port 443)...");

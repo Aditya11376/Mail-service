@@ -9,6 +9,8 @@ services:
     envVars:
       - key: PORT
         value: 8095
+      - key: BREVO_API_KEY
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM_EMAIL
