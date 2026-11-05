@@ -35,7 +35,7 @@ public class DoctorApprovalMailServiceImpl implements IDoctorApprovalMailService
     @Value("${spring.mail.username:}")
     private String mailUsername;
 
-    @Value("${mail.from.email:noreply@cosmos.org.in}")
+    @Value("${mail.from.email}")
     private String fromEmail;
 
     @Value("${mail.from.name:COSMOS Health (GUPTA-SOFTWORKS ORGANISATION)}")

@@ -20,6 +20,6 @@ services:
       - key: MAIL_FROM_EMAIL
         value: "guptasoftworks@gmail.com"
       - key: MAIL_FROM_NAME
-        value: COSMOS Health (GUPTA-SOFTWORKS ORGANISATION)
+        value: COSMOS Health (GUPTA SOFTWORKS ORGANISATION)
       - key: mail.simulate.if-empty
         value: "false"
