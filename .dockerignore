@@ -1,0 +1,12 @@
+**/.git
+**/.gitignore
+**/.env
+**/*.env
+target/
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+HELP.md
+*.log

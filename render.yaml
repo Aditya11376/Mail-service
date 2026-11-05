@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: cosmos-mail-service
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /mail/health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8095
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM_EMAIL
+        value: noreply@cosmos.org.in
+      - key: MAIL_FROM_NAME
+        value: COSMOS Health (GUPTA-SOFTWORKS ORGANISATION)
+      - key: mail.simulate.if-empty
+        value: "false"
